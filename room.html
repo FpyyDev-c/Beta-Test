@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sala — ScreenRoom</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%233483fa%22/><circle cx=%2250%22 cy=%2250%22 r=%2220%22 fill=%22%23ffffff%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <div class="room">
+    <div class="room-topbar glass">
+      <div class="room-code-chip glass" id="roomCodeChip" title="Copiar código">
+        <span class="dot"></span>
+        <div>
+          <div class="code" id="roomCodeText">-----</div>
+          <small>toque para copiar</small>
+        </div>
+      </div>
+
+      <div class="fp-avatar-sm" id="serverAvatarChip" style="display:none;"></div>
+      <span id="serverNameChip" style="display:none;font-family:var(--font-display);font-weight:700;font-size:14px;"></span>
+
+      <span class="status-pill" id="statusPill">Conectando…</span>
+
+      <div class="room-actions">
+        <button class="btn btn-ghost" id="btnEndRoom" style="display:none;">Encerrar sala</button>
+        <button class="btn-icon chat-toggle-mobile" id="btnChatToggle" title="Chat e participantes">
+          💬<span class="chat-badge" id="chatBadge" style="display:none;"></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="room-body">
+      <div class="stage-col">
+        <div class="stage" id="stage">
+          <video id="stageVideo" autoplay playsinline style="display:none;"></video>
+          <div class="stage-empty" id="stageEmpty">
+            <div class="icon">🖥️</div>
+            <h4>Ninguém está compartilhando a tela</h4>
+            <p>Clique em "Compartilhar tela" na barra abaixo para começar.</p>
+          </div>
+          <div class="on-air-badge" id="onAirBadge" style="display:none;"><span class="dot"></span> AO VIVO</div>
+          <div class="stage-name-badge" id="stageNameBadge" style="display:none;"></div>
+        </div>
+        <div class="share-thumbs" id="shareThumbs"></div>
+        <div class="camera-strip" id="cameraStrip"></div>
+      </div>
+
+      <div class="side-col">
+        <div class="side-tabs">
+          <button class="side-tab active" data-panel="Participants">Participantes <span id="participantCount"></span></button>
+          <button class="side-tab" data-panel="Chat">Chat <span class="chat-badge" id="chatBadgeTab"></span></button>
+        </div>
+
+        <div class="side-panel active" id="panelParticipants">
+          <ul class="participant-list" id="participantList"></ul>
+        </div>
+
+        <div class="side-panel" id="panelChat">
+          <div class="chat-msgs" id="chatMsgs"></div>
+          <form class="chat-form" id="chatForm">
+            <input type="text" id="chatInput" placeholder="Escreva uma mensagem…" autocomplete="off" maxlength="500" />
+            <button class="btn btn-primary" type="submit">➤</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="dock-wrap">
+    <div class="dock glass">
+      <button class="btn-icon active" id="btnMic" title="Microfone (M)">🎤</button>
+      <button class="btn-icon" id="btnDeafen" title="Desativar áudio (não ouvir ninguém)">🎧</button>
+      <button class="btn-icon" id="btnCamera" title="Câmera">📷</button>
+      <button class="btn-icon" id="btnShare" title="Compartilhar tela">🖥️</button>
+
+      <div class="dock-pop">
+        <button class="btn-icon" id="btnQuality" title="Qualidade do compartilhamento">📶</button>
+        <div class="menu glass" id="qualityMenu">
+          <div class="menu-title">Qualidade da tela</div>
+        </div>
+      </div>
+
+      <div class="dock-pop">
+        <button class="btn-icon" id="btnSettings" title="Configurações de voz e vídeo">⚙️</button>
+      </div>
+
+      <button class="btn-icon" id="btnChatToggleDock" title="Chat" onclick="document.getElementById('btnChatToggle').click()">💬</button>
+      <button class="btn-icon" id="btnFullscreen" title="Tela cheia">⛶</button>
+      <span class="sep"></span>
+      <button class="btn-icon danger" id="btnLeave" title="Sair da sala">📞</button>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal glass settings-modal">
+      <div class="settings-head">
+        <h3>Configurações de voz e vídeo</h3>
+        <button class="btn-icon" id="btnSettingsClose" title="Fechar">✕</button>
+      </div>
+
+      <div class="settings-tabs">
+        <button class="settings-tab active" data-tab="devices">Dispositivos</button>
+        <button class="settings-tab" data-tab="mic">Microfone</button>
+        <button class="settings-tab" data-tab="volumes">Volumes</button>
+      </div>
+
+      <div class="settings-panel active" id="settingsPanelDevices">
+        <label class="settings-field">
+          <span>Microfone (entrada)</span>
+          <select id="selMic"></select>
+        </label>
+        <label class="settings-field">
+          <span>Câmera</span>
+          <select id="selCamera"></select>
+        </label>
+        <label class="settings-field">
+          <span>Qualidade da câmera</span>
+          <select id="selCameraQuality"></select>
+        </label>
+        <label class="settings-field">
+          <span>Saída de áudio (alto-falante/fone)</span>
+          <select id="selSpeaker"></select>
+        </label>
+        <p class="settings-hint" id="speakerSelectHint" style="display:none;">Escolher o dispositivo de saída não é suportado neste navegador — use as configurações de som do sistema.</p>
+        <button class="btn btn-ghost" id="btnRefreshDevices">🔄 Atualizar lista de dispositivos</button>
+      </div>
+
+      <div class="settings-panel" id="settingsPanelMic">
+        <label class="settings-field">
+          <span>Volume do microfone <b id="micVolumeLabel">100%</b></span>
+          <input type="range" id="rangeMicVolume" min="0" max="200" value="100" />
+        </label>
+
+        <div class="settings-toggle-row">
+          <span>Cancelamento de eco</span>
+          <label class="switch"><input type="checkbox" id="toggleEcho" checked /><span class="slider"></span></label>
+        </div>
+        <div class="settings-toggle-row">
+          <span>Supressão de ruído</span>
+          <label class="switch"><input type="checkbox" id="toggleNoiseSup" checked /><span class="slider"></span></label>
+        </div>
+        <div class="settings-toggle-row">
+          <span>Controle automático de ganho</span>
+          <label class="switch"><input type="checkbox" id="toggleAGC" checked /><span class="slider"></span></label>
+        </div>
+        <div class="settings-toggle-row">
+          <span>Isolamento de voz <small>(filtra ruído de fundo constante)</small></span>
+          <label class="switch"><input type="checkbox" id="toggleIsolation" /><span class="slider"></span></label>
+        </div>
+
+        <button class="btn btn-primary" id="btnMicTest">🎙️ Testar microfone</button>
+        <p class="settings-hint">Clique em testar, fale "aaaa" e você deve se ouvir. Use fones de ouvido para evitar eco. Clique de novo para parar.</p>
+      </div>
+
+      <div class="settings-panel" id="settingsPanelVolumes">
+        <label class="settings-field">
+          <span>Volume do compartilhamento de tela <b id="screenVolumeLabel">100%</b></span>
+          <input type="range" id="rangeScreenVolume" min="0" max="200" value="100" />
+        </label>
+        <div class="settings-title-sm">Volume por participante</div>
+        <ul class="volume-list" id="volumeList"></ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="nameModal">
+    <div class="modal glass">
+      <h3>Como você quer ser chamado?</h3>
+      <p id="nameHint">Esse nome vai aparecer para todos na sala.</p>
+      <input type="text" id="nameInput" placeholder="Seu nome" maxlength="30" autocomplete="off" />
+      <button class="btn btn-primary" id="nameConfirm">Entrar na sala</button>
+    </div>
+  </div>
+
+  <!-- PeerJS: cliente WebRTC que usa a rede pública de signaling do PeerJS
+       (0.peerjs.com), gratuita e sem necessidade de conta. -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/gh-db.js"></script>
+  <script src="js/servers.js"></script>
+  <script src="js/mesh.js"></script>
+  <script src="js/room.js"></script>
+</body>
+</html>

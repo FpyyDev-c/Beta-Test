@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin — FpyyCord</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%233483fa%22/><circle cx=%2250%22 cy=%2250%22 r=%2220%22 fill=%22%23ffffff%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div class="fp-header">
+    <div class="brand-mark"><span class="brand-dot"></span> FpyyCord — Admin</div>
+    <div class="fp-header-actions">
+      <a class="btn btn-ghost" href="servers.html">← Voltar</a>
+    </div>
+  </div>
+
+  <div id="gate" class="fp-admin-gate">
+    <h3>Painel de administração</h3>
+    <p style="color:var(--text-muted);font-size:13.5px;">Digite a senha de admin (configurada em js/config.js).</p>
+    <input type="password" id="gatePass" class="modal-none" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);background:var(--surface-alt);margin-bottom:10px;" placeholder="Senha" />
+    <button class="btn btn-primary" id="btnGateGo" style="width:100%;">Entrar</button>
+    <p class="inline-error" id="gateError"></p>
+  </div>
+
+  <div class="fp-wrap" id="panel" style="display:none;">
+    <p class="inline-error" id="adminError"></p>
+
+    <div class="fp-section-title">Servidores (<span id="serverCount">0</span>)</div>
+    <div style="overflow-x:auto;">
+      <table class="fp-admin-table" id="serverTable">
+        <thead>
+          <tr><th>Ícone</th><th>Nome</th><th>Código</th><th>Visibilidade</th><th>Limite</th><th>Criado em</th><th></th></tr>
+        </thead>
+        <tbody id="serverTbody"></tbody>
+      </table>
+    </div>
+
+    <div class="fp-section-title">Perfis (<span id="profileCount">0</span>)</div>
+    <div style="overflow-x:auto;">
+      <table class="fp-admin-table" id="profileTable">
+        <thead>
+          <tr><th>Foto</th><th>Nome</th><th>Descrição</th><th>ID</th><th></th></tr>
+        </thead>
+        <tbody id="profileTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/gh-db.js"></script>
+  <script src="js/servers.js"></script>
+  <script src="js/admin-page.js"></script>
+</body>
+</html>

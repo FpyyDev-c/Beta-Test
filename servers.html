@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Servidores — FpyyCord</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%233483fa%22/><circle cx=%2250%22 cy=%2250%22 r=%2220%22 fill=%22%23ffffff%22/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&family=Roboto+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <div class="fp-header">
+    <div class="brand-mark"><span class="brand-dot"></span> FpyyCord</div>
+    <div class="fp-header-actions">
+      <a class="btn btn-ghost" href="admin.html">🛠️ Admin</a>
+      <button class="fp-profile-btn" id="btnProfile">
+        <span class="fp-avatar-sm" id="myAvatarChip">?</span>
+        <span id="myNameChip">Meu perfil</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="fp-wrap">
+    <div class="fp-join-row">
+      <input type="text" id="codeInput" placeholder="CÓDIGO DO SERVIDOR" maxlength="5" autocomplete="off" />
+      <button class="btn btn-primary" id="btnJoinCode">Entrar</button>
+      <button class="btn btn-secondary" id="btnCreate">➕ Criar servidor</button>
+    </div>
+
+    <p class="inline-error" id="inlineError"></p>
+
+    <div class="fp-section-title">Servidores públicos</div>
+    <div class="fp-server-grid" id="serverGrid">
+      <div class="fp-empty">Carregando…</div>
+    </div>
+  </div>
+
+  <!-- Criar servidor -->
+  <div class="modal-backdrop" id="createModal">
+    <div class="modal glass fp-modal-wide">
+      <h3>Criar servidor</h3>
+      <p>Configure como as pessoas vão encontrar e entrar no seu servidor.</p>
+
+      <div class="fp-form-field">
+        <label>Nome do servidor</label>
+        <input type="text" id="csName" maxlength="60" placeholder="Ex: Turma do 3º ano" />
+      </div>
+      <div class="fp-form-field">
+        <label>Descrição</label>
+        <textarea id="csDesc" rows="2" maxlength="200" placeholder="Sobre o que é esse servidor"></textarea>
+      </div>
+
+      <div class="fp-toggle-row">
+        <span>Servidor público <small style="display:block;color:var(--text-faint);">Aparece na lista para qualquer pessoa entrar</small></span>
+        <label class="switch"><input type="checkbox" id="csPublic" checked /><span class="slider"></span></label>
+      </div>
+
+      <div class="fp-form-field">
+        <label>Limite de membros</label>
+        <input type="number" id="csLimit" min="2" max="50" value="10" />
+      </div>
+
+      <div class="fp-form-field">
+        <label>Imagens (opcional)</label>
+        <div class="fp-file-row">
+          <label>🖼️ Ícone
+            <input type="file" id="csAvatar" accept="image/*" />
+          </label>
+          <label>🎞️ Banner (foto ou gif)
+            <input type="file" id="csBanner" accept="image/*,image/gif" />
+          </label>
+        </div>
+      </div>
+
+      <p class="inline-error" id="createError"></p>
+
+      <div id="createStep1">
+        <button class="btn btn-primary" id="btnCreateGo">Criar servidor</button>
+        <button class="btn btn-ghost" id="btnCreateCancel" style="width:100%;margin-top:8px;">Cancelar</button>
+      </div>
+
+      <div id="createStep2" style="display:none;">
+        <div class="fp-created-box">
+          <div>Servidor criado! Código de entrada:</div>
+          <div class="code" id="createdCode">-----</div>
+        </div>
+        <button class="btn btn-primary" id="btnCreateEnter" style="margin-top:12px;">Entrar agora</button>
+        <button class="btn btn-ghost" id="btnCreateClose" style="width:100%;margin-top:8px;">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Perfil -->
+  <div class="modal-backdrop" id="profileModal">
+    <div class="modal glass fp-modal-wide">
+      <h3>Meu perfil</h3>
+      <p>Esse perfil aparece pra quem estiver no mesmo servidor que você.</p>
+
+      <div class="fp-form-field">
+        <label>Nome</label>
+        <input type="text" id="pfName" maxlength="30" />
+      </div>
+      <div class="fp-form-field">
+        <label>Descrição / status</label>
+        <textarea id="pfDesc" rows="2" maxlength="200"></textarea>
+      </div>
+      <div class="fp-form-field">
+        <label>Imagens (opcional)</label>
+        <div class="fp-file-row">
+          <label>🙂 Foto de perfil
+            <input type="file" id="pfAvatar" accept="image/*" />
+          </label>
+          <label>🎞️ Banner (foto ou gif)
+            <input type="file" id="pfBanner" accept="image/*,image/gif" />
+          </label>
+        </div>
+      </div>
+      <p class="inline-error" id="profileError"></p>
+      <button class="btn btn-primary" id="btnProfileSave">Salvar perfil</button>
+      <button class="btn btn-ghost" id="btnProfileCancel" style="width:100%;margin-top:8px;">Cancelar</button>
+    </div>
+  </div>
+
+  <div class="fp-toast" id="fpToast"></div>
+
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/gh-db.js"></script>
+  <script src="js/servers.js"></script>
+  <script src="js/servers-page.js"></script>
+</body>
+</html>
